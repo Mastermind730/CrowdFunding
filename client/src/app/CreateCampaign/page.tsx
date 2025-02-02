@@ -34,9 +34,9 @@ export function Page() {
       deadline
       });
     
-      console.log(formData);
     
   };
+  // console.log(formData);
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -62,12 +62,12 @@ export function Page() {
   return (
     <>
     
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800 p-4 overflow-hidden">
-      <div className="absolute inset-0 w-full h-full">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,0.7),rgba(0,0,0,0.9))]" />
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent animate-shimmer" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-shimmer delay-150" />
-      </div>
+<div className="flex flex-col items-center justify-center  p-4">
+      {/* <div className=" w-full ">
+        <div className=" bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,0.7),rgba(0,0,0,0.9))]" />
+        <div className=" top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent animate-shimmer" />
+        <div className=" bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-shimmer delay-150" />
+      </div> */}
 
       <motion.div 
         initial="hidden"
