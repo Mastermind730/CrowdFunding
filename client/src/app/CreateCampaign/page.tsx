@@ -4,13 +4,13 @@ import { cn } from "@/utils/cn";
 import { Label } from "../components/label";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
+
 
 export function Page() {
   const router = useRouter();
   
   // Separate state variables for each input
+  const [formData,setFormData]=useState({});
   const [name, setName] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -26,6 +26,16 @@ export function Page() {
       target,
       deadline
     });
+    setFormData({
+      name,
+      title,
+      description,
+      target,
+      deadline
+      });
+    
+      console.log(formData);
+    
   };
 
   const containerVariants = {
