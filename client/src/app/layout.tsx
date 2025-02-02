@@ -23,8 +23,7 @@ export default function RootLayout({
       
       <body className={inter.className}>
         <ThirdwebProvider>
-          <Sidebar/>
-          <Navbar/>
+          
           {children}
           </ThirdwebProvider>
       </body>

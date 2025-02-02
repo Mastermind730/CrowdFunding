@@ -1,13 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import { cn } from "@/utils/cn";
-import { Label } from "../components/label";
+import { Label } from "./label";
+import { Input } from "./input";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
 
-export function Page() {
+export function Form() {
   const router = useRouter();
   
   // Separate state variables for each input
@@ -50,8 +49,6 @@ export function Page() {
   };
 
   return (
-    <>
-    
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800 p-4 overflow-hidden">
       <div className="absolute inset-0 w-full h-full">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,0.7),rgba(0,0,0,0.9))]" />
@@ -65,10 +62,8 @@ export function Page() {
         variants={containerVariants}
         className="max-w-md w-full mx-auto rounded-2xl p-8 relative backdrop-blur-xl bg-black/40 border border-gray-800 shadow-[0_0_30px_rgba(8,_112,_184,_0.7)]"
       >
- <div
-          className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 rounded-2xl animate-gradient"
-          style={{ pointerEvents: "none" }} 
-        />        
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 rounded-2xl animate-gradient" />
+        
         <motion.h2 
           variants={itemVariants}
           className="font-bold text-3xl bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2"
@@ -110,6 +105,7 @@ export function Page() {
               <input 
                 type="text"
                 id="title"
+                value={title}
                 
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Make it memorable"
@@ -196,7 +192,6 @@ export function Page() {
         <div className="absolute top-40 right-20 w-24 h-24 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000" />
       </motion.div>
     </div>
-    </>
   );
 }
 
@@ -223,4 +218,4 @@ const LabelInputContainer = ({
   );
 };
 
-export default Page;
+export default Form;
