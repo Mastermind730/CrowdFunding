@@ -1,236 +1,126 @@
 "use client";
-import React, { useState } from "react";
-import { cn } from "@/utils/cn";
-import { Label } from "../components/label";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import React, { useState } from 'react'
+import { useRouter } from 'next/navigation';
+import { ethers } from 'ethers';
+import { IoIosRocket } from "react-icons/io";
+import { MdAttachMoney } from "react-icons/md";
+
+import CustomButton from '../components/CustomButton';
+import FormField from '../components/FprmField';
+import Loader from '../components/Loader';
 
 
-export function Page() {
-  const router = useRouter();
-  
-  // Separate state variables for each input
-  const [formData,setFormData]=useState({});
-  const [name, setName] = useState('');
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [target, setTarget] = useState('');
-  const [deadline, setDeadline] = useState('');
+const CreateCampaign = () => {
+  const router= useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  // const { createCampaign } = useStateContext();
+  const [form, setForm] = useState({
+    name: '',
+    title: '',
+    description: '',
+    target: '', 
+    deadline: '',
+    image: ''
+  });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFormFieldChange = (fieldName, e) => {
+    setForm({ ...form, [fieldName]: e.target.value })
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted", {
-      name,
-      title,
-      description,
-      target,
-      deadline
-    });
-    setFormData({
-      name,
-      title,
-      description,
-      target,
-      deadline
-      });
-    
-    
-  };
-  // console.log(formData);
-
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.5 }
-    }
-  };
+    console.log(form)
+    // checkIfImage(form.image, async (exists) => {
+    //   if(exists) {
+    //     setIsLoading(true)
+    //     await createCampaign({ ...form, target: ethers.utils.parseUnits(form.target, 18)})
+    //     setIsLoading(false);
+    //     router.replace('/');
+    //   } else {
+    //     alert('Provide valid image URL')
+    //     setForm({ ...form, image: '' });
+    //   }
+    // })
+  }
 
   return (
-    <>
-    
-<div className="flex flex-col items-center justify-center  p-4">
-      {/* <div className=" w-full ">
-        <div className=" bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,0.7),rgba(0,0,0,0.9))]" />
-        <div className=" top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent animate-shimmer" />
-        <div className=" bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-shimmer delay-150" />
-      </div> */}
+    <div className="bg-[#1c1c24] flex justify-center items-center flex-col rounded-[10px] sm:p-10 p-4">
+      {isLoading && <Loader />}
+      <div className="flex justify-center items-center p-[16px] sm:min-w-[380px] bg-[#3a3a43] rounded-[10px]">
+        <h1 className="font-epilogue flex  font-bold sm:text-[25px] text-[18px] leading-[38px] text-white">
+          <IoIosRocket size={40} color='red'/>
+          Start a Campaign
+          </h1>
+      </div>
 
-      <motion.div 
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        className="max-w-md w-full mx-auto rounded-2xl p-8 relative backdrop-blur-xl bg-black/40 border border-gray-800 shadow-[0_0_30px_rgba(8,_112,_184,_0.7)]"
-      >
- <div
-          className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 rounded-2xl animate-gradient"
-          style={{ pointerEvents: "none" }} 
-        />        
-        <motion.h2 
-          variants={itemVariants}
-          className="font-bold text-3xl bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2"
-        >
-          Create Your Campaign
-        </motion.h2>
-        
-        <motion.p 
-          variants={itemVariants}
-          className="text-sm text-gray-300 mb-8"
-        >
-          Transform your vision into reality. Launch a campaign that stands out.
-        </motion.p>
+      <form onSubmit={handleSubmit} className="w-full mt-[65px] flex flex-col gap-[30px]">
+        <div className="flex flex-wrap gap-[40px]">
+          <FormField 
+            labelName="Your Name *"
+            placeholder="John Doe"
+            inputType="text"
+            value={form.name}
+            handleChange={(e) => handleFormFieldChange('name', e)}
+          />
+          <FormField 
+            labelName="Campaign Title *"
+            placeholder="Write a title"
+            inputType="text"
+            value={form.title}
+            handleChange={(e) => handleFormFieldChange('title', e)}
+          />
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <motion.div variants={itemVariants} className="group">
-            <LabelInputContainer>
-              <Label htmlFor="name" className="text-gray-300 group-focus-within:text-blue-400 transition-colors">
-                Campaign Creator
-              </Label>
-              <input 
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name or organization"
-                className="w-full px-3 py-2 bg-gray-900/50 text-white border border-gray-700 rounded-md 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 
-                         placeholder-gray-500 transition-all duration-300"
-              />
-            </LabelInputContainer>
-          </motion.div>
+        <FormField 
+            labelName="Story *"
+            placeholder="Write your story"
+            isTextArea
+            value={form.description}
+            handleChange={(e) => handleFormFieldChange('description', e)}
+          />
 
-          <motion.div variants={itemVariants} className="group">
-            <LabelInputContainer>
-              <Label htmlFor="title" className="text-gray-300 group-focus-within:text-blue-400 transition-colors">
-                Campaign Title
-              </Label>
-              <input 
-                type="text"
-                id="title"
-                
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Make it memorable"
-                className="w-full px-3 py-2 bg-gray-900/50 text-white border border-gray-700 rounded-md 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 
-                         placeholder-gray-500 transition-all duration-300"
-              />
-            </LabelInputContainer>
-          </motion.div>
+        <div className="w-full flex justify-start items-center p-4 bg-[#8c6dfd] h-[120px] rounded-[10px]">
+          {/* <img src={"money"} alt="money" className="w-[40px] h-[40px] object-contain"/>
+           */}
+           <MdAttachMoney size={40} />
+          <h4 className="font-epilogue font-bold text-[25px] text-white ml-[20px]">You will get 100% of the raised amount</h4>
+        </div>
 
-          <motion.div variants={itemVariants} className="group">
-            <LabelInputContainer>
-              <Label htmlFor="description" className="text-gray-300 group-focus-within:text-blue-400 transition-colors">
-                Campaign Description
-              </Label>
-              <input 
-                type="text"
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Tell your story"
-                className="w-full px-3 py-2 bg-gray-900/50 text-white border border-gray-700 rounded-md 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 
-                         placeholder-gray-500 transition-all duration-300"
-              />
-            </LabelInputContainer>
-          </motion.div>
+        <div className="flex flex-wrap gap-[40px]">
+          <FormField 
+            labelName="Goal *"
+            placeholder="ETH 0.50"
+            inputType="text"
+            value={form.target}
+            handleChange={(e) => handleFormFieldChange('target', e)}
+          />
+          <FormField 
+            labelName="End Date *"
+            placeholder="End Date"
+            inputType="date"
+            value={form.deadline}
+            handleChange={(e) => handleFormFieldChange('deadline', e)}
+          />
+        </div>
 
-          <motion.div variants={itemVariants} className="group">
-            <LabelInputContainer>
-              <Label htmlFor="target" className="text-gray-300 group-focus-within:text-blue-400 transition-colors">
-                Funding Target
-              </Label>
-              <input 
-                type="text"
-                id="target"
-                value={target}
-                onChange={(e) => setTarget(e.target.value)}
-                placeholder="Set your goal"
-                className="w-full px-3 py-2 bg-gray-900/50 text-white border border-gray-700 rounded-md 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 
-                         placeholder-gray-500 transition-all duration-300"
-              />
-            </LabelInputContainer>
-          </motion.div>
+        <FormField 
+            labelName="Campaign image *"
+            placeholder="Place image URL of your campaign"
+            inputType="url"
+            value={form.image}
+            handleChange={(e) => handleFormFieldChange('image', e)}
+          />
 
-          <motion.div variants={itemVariants} className="group">
-            <LabelInputContainer>
-              <Label htmlFor="deadline" className="text-gray-300 group-focus-within:text-blue-400 transition-colors">
-                Campaign Deadline
-              </Label>
-              <input 
-                type="date"
-                id="deadline"
-                value={deadline}
-                onChange={(e) => setDeadline(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-900/50 text-white border border-gray-700 rounded-md 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 
-                         placeholder-gray-500 transition-all duration-300"
-              />
-            </LabelInputContainer>
-          </motion.div>
-
-          <motion.button
-            variants={itemVariants}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full py-3 px-4 relative overflow-hidden rounded-md font-medium text-white
-                     bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600
-                     hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500
-                     transition-all duration-300 ease-in-out
-                     shadow-[0_0_20px_rgba(8,_112,_184,_0.5)]
-                     hover:shadow-[0_0_25px_rgba(8,_112,_184,_0.7)]"
-            type="submit"
-          >
-            <span className="relative z-10">Launch Campaign</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 opacity-0 hover:opacity-100 transition-opacity duration-300" />
-            <BottomGradient />
-          </motion.button>
-        </form>
-
-        <div className="absolute -top-10 -left-10 w-32 h-32 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob" />
-        <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000" />
-        <div className="absolute top-40 right-20 w-24 h-24 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000" />
-      </motion.div>
+          <div className="flex justify-center items-center mt-[40px]">
+            <CustomButton 
+              btnType="submit"
+              title="Submit new campaign"
+              styles="bg-[#1dc071]"
+            />
+          </div>
+      </form>
     </div>
-    </>
-  );
+  )
 }
 
-const BottomGradient = () => {
-  return (
-    <>
-      <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
-      <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
-    </>
-  );
-};
-
-const LabelInputContainer = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div className={cn("flex flex-col space-y-2 w-full", className)}>
-      {children}
-    </div>
-  );
-};
-
-export default Page;
+export default CreateCampaign
