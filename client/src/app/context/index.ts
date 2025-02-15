@@ -2,28 +2,25 @@ import React, { createContext, useState, useContext } from "react";
 import { useAddress, useContract, useContractWrite, useConnect } from "@thirdweb-dev/react";
 import { ethers } from "ethers";
 
-// Corrected interface name and spelling
 interface FormData {
   owner: string;
   title: string;
   description: string;
   target: string;
-  deadline: number; // Corrected spelling
+  deadline: number;
   amountCollected: number;
   image: string;
 }
 
-// Updated context type
 interface StateContextType {
   address: string | undefined;
-  connect: () => Promise<any>;
-  createCampaign: (form: FormData) => Promise<void>;
+  connect: () => Promise<void>;
+  createCampaign: (form: FormData) => Promise<any>;
+  contract: ReturnType<typeof useContract>["contract"];
 }
 
-// Create context with proper type
-const StateContext = createContext<StateContextType | null>(null);
+export const StateContext = createContext<StateContextType | null>(null);
 
-// Custom hook to use the context
 export const useStateContext = () => {
   const context = useContext(StateContext);
   if (!context) {
@@ -32,32 +29,36 @@ export const useStateContext = () => {
   return context;
 };
 
-export default function StateContextProvider({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
-  // Use contract address from environment or make it configurable
+export default function StateContextProvider({ children }: { children: React.ReactNode }) {
   const CONTRACT_ADDRESS = "0x86A398A4906CD3b2a4Aa0099E47243c000B5aBe8";
+
   const { contract } = useContract(CONTRACT_ADDRESS);
+  
   const { mutateAsync: createCampaignContract } = useContractWrite(contract, "createCampaign");
 
   const address = useAddress();
-  const connect = useConnect();
+  const { connect } = useConnect();
 
-  // Improved campaign creation function
   const createCampaign = async (form: FormData) => {
     try {
       if (!address) {
         await connect();
       }
+      
+      if (!createCampaignContract) {
+        throw new Error("Contract function not available");
+      }
 
-      const data = await createCampaignContract([
-        address,
-        form.title,
-        form.description,
-        ethers.utils.parseUnits(form.target, 18), // Convert to wei
-        new Date(form.deadline).getTime(),
-        form.image
-      ]);
+      const data = await createCampaignContract({
+        args: [
+          address,
+          form.title,
+          form.description,
+          ethers.utils.parseUnits(form.target, "ether"), // Convert to wei
+          Math.floor(form.deadline / 1000), // Convert to seconds
+          form.image,
+        ],
+      });
 
       console.log("Campaign created successfully", data);
       return data;
@@ -67,11 +68,11 @@ export default function StateContextProvider({
     }
   };
 
-  // Provide context value
   const contextValue: StateContextType = {
     address,
-    contract,
-    createCampaign:createCampaign,
+    contract: contract || null,
+    connect,
+    createCampaign,
   };
 
   return (
